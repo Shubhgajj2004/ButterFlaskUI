@@ -22,7 +22,7 @@ class Text(Widget):
         render(): Renders the text widget as HTML.
 
     """
-    def __init__(self, text, font_size=4, style=None, id='', classes='', on_click=None):
+    def __init__(self, text, font_size=24, style=None, id='', classes='', on_click=None):
         """
         Initializes a Text widget.
 
@@ -52,7 +52,7 @@ class Text(Widget):
 
         """
         default_style = {
-            'font-size': f'{self.font_size}vw'
+            'font-size': f'{self.font_size}px'
         }
         merged_style = {**default_style, **self.style}
         return '; '.join(f'{key}:{value}' for key, value in merged_style.items())
