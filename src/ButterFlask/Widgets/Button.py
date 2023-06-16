@@ -1,5 +1,8 @@
 from typing import List, Dict, Optional
 from Widget import Widget
+from style_formatter import format_style
+from class_formatter import format_class_attr
+from js_code_generator import generate_js_code
 
 class Button(Widget):
     """
@@ -29,9 +32,6 @@ class Button(Widget):
 
     Methods:
         render(): Renders the button as HTML.
-        _generate_js_code(): Generates the JavaScript code for AJAX requests.
-        _format_style(): Formats the CSS styles as a string.
-        _format_class_attr(): Formats the classes as a string.
         _apply_default_style(): Applies default CSS styles to the button.
     """
 
@@ -107,62 +107,22 @@ class Button(Widget):
         """
         onclick = f"event.preventDefault(); {self.on_click}" if self.on_click else ""
         if self.js and self.route:
-            js_code = self._generate_js_code()
-            self.js.append(js_code) 
-        class_attr = self._format_class_attr()
-        return f'<button id="{self.id}" class="{class_attr}" style="{self._format_style()}" onclick="{onclick}">{self.text}</button>'
-
-    def _generate_js_code(self) -> str:
-        """
-        Generates the JavaScript code for AJAX requests.
-
-        Returns:
-            str: The JavaScript code for AJAX requests.
-        """
-        js_code = f"""
-                function {self.func_name}(event) {{
-                    $.ajax({{
-                        type: '{self.method}',
-                        url: '{self.route}',
-                        data: '{self.request_data}',
-                        dataType: '{self.data_type}',
-                        contentType: '{self.content_type}',
-                        beforeSend: function(xhr) {{
-                            {self.before_send}  // Add any custom headers or settings before sending the request
-                        }},
-                        success: function(response) {{
-                            {self.on_success}  // Handle successful response
-                        }},
-                        error: function(xhr, status, error) {{
-                            console.log(error);
-                            {self.on_error}   // Handle error response
-                        }},
-                        complete: function() {{
-                            {self.on_completed}
-                        }}
-                    }});
-                }}
-            """
-        return js_code
-
-    def _format_style(self) -> str:
-        """
-        Formats the CSS styles as a string.
-
-        Returns:
-            str: The formatted CSS styles.
-        """
-        return '; '.join(f'{key}: {value}' for key, value in self.style.items())
-    
-    def _format_class_attr(self) -> str:
-        """
-        Formats the classes as a string.
-
-        Returns:
-            str: The formatted class attribute.
-        """
-        classes = ' '.join(self.classes)
-        return classes
+            js_code = generate_js_code(
+                self.func_name,
+                self.method,
+                self.route,
+                self.request_data,
+                self.data_type,
+                self.content_type,
+                self.before_send,
+                self.on_success,
+                self.on_error,
+                self.on_completed
+            )
+            self.js.append(js_code)
+        class_attr = format_class_attr(self.classes)
+        style_attr = format_style(self.style)
+        return f'<button id="{self.id}" class="{class_attr}" style="{style_attr}" onclick="{onclick}">{self.text}</button>'
 
     def _apply_default_style(self):
         """
