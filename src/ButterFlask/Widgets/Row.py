@@ -4,21 +4,23 @@ from style_formatter import format_style
 from class_formatter import format_class_attr
 from js_code_generator import generate_js_code
 
-class Image(Widget):
+class Row(Widget):
     """
-    A class representing an Image widget.
+    A class representing a Row widget.
 
     Attributes:
-        source (str): The source URL of the image.
-        alt (str, optional): The alternative text for the image. Defaults to an empty string.
-        style (Dict[str, str], optional): CSS styles for the image. Defaults to an empty dictionary.
-        default (bool, optional): Whether to apply default styles to the image. Defaults to True.
-        id (str, optional): The ID attribute of the image. Defaults to ''.
-        classes (List[str], optional): The classes to apply to the image. Defaults to an empty list.
-        func_name (str, optional): The name of the JavaScript function associated with the image's click event.
+        direction (str): The direction of the row layout. Defaults to 'row'.
+        horizontal (str): The horizontal alignment of the row's children. Defaults to 'flex-start'.
+        vertical (str): The vertical alignment of the row's children. Defaults to 'center'.
+        children (List[Widget]): The list of child widgets contained within the row.
+        style (Dict[str, str], optional): CSS styles for the row. Defaults to an empty dictionary.
+        default (bool): Whether to apply default styles to the row. Defaults to True.
+        id (str): The ID attribute of the row. Defaults to ''.
+        classes (List[str]): The classes to apply to the row. Defaults to an empty list.
+        func_name (str, optional): The name of the JavaScript function associated with the row's click event.
         method (str, optional): The HTTP method used for AJAX requests. Defaults to 'POST'.
         js (List[str], optional): Additional JavaScript code to be included. Defaults to an empty list.
-        on_click (str, optional): JavaScript code to be executed on image click.
+        on_click (str, optional): JavaScript code to be executed on row click.
         route (str, optional): The URL for AJAX requests. Defaults to None.
         request_data (str, optional): Data to be sent with AJAX requests. Defaults to an empty string.
         before_send (str, optional): JavaScript code to be executed before sending AJAX requests.
@@ -32,14 +34,16 @@ class Image(Widget):
         Widget: The base class for widgets.
 
     Methods:
-        render(): Renders the Image as HTML.
-        _apply_default_style(): Applies default CSS styles to the image.
+        render(): Renders the row as HTML.
+        _apply_default_style(): Applies default CSS styles to the row.
     """
 
     def __init__(
         self,
-        source: str,
-        alt: str = '',
+        direction: str = 'row',
+        horizontal: str = 'flex-start',
+        vertical: str ='center',
+        children: List[Widget] = None,
         style: Optional[Dict[str, str]] = None,
         default: bool = True,
         id: str = '',
@@ -58,19 +62,21 @@ class Image(Widget):
         on_error: str = ''
     ):
         """
-        Initializes an Image instance.
+        Initializes a Row instance.
 
         Args:
-            source (str): The source URL of the image.
-            alt (str, optional): The alternative text for the image. Defaults to an empty string.
-            style (Dict[str, str], optional): CSS styles for the image. Defaults to an empty dictionary.
-            default (bool, optional): Whether to apply default styles to the image. Defaults to True.
-            id (str, optional): The ID attribute of the image. Defaults to ''.
-            classes (List[str], optional): The classes to apply to the image. Defaults to an empty list.
-            func_name (str, optional): The name of the JavaScript function associated with the image's click event.
+            direction (str, optional): The direction of the row layout. Defaults to 'row'.
+            horizontal (str, optional): The horizontal alignment of the row's children. Defaults to 'flex-start'.
+            vertical (str, optional): The vertical alignment of the row's children. Defaults to 'center'.
+            children (List[Widget], optional): The list of child widgets contained within the row.
+            style (Dict[str, str], optional): CSS styles for the row. Defaults to an empty dictionary.
+            default (bool, optional): Whether to apply default styles to the row. Defaults to True.
+            id (str, optional): The ID attribute of the row. Defaults to ''.
+            classes (List[str], optional): The classes to apply to the row. Defaults to an empty list.
+            func_name (str, optional): The name of the JavaScript function associated with the row's click event.
             method (str, optional): The HTTP method used for AJAX requests. Defaults to 'POST'.
             js (List[str], optional): Additional JavaScript code to be included. Defaults to an empty list.
-            on_click (str, optional): JavaScript code to be executed on image click.
+            on_click (str, optional): JavaScript code to be executed on row click.
             route (str, optional): The URL for AJAX requests. Defaults to None.
             request_data (str, optional): Data to be sent with AJAX requests. Defaults to an empty string.
             before_send (str, optional): JavaScript code to be executed before sending AJAX requests.
@@ -80,9 +86,10 @@ class Image(Widget):
             on_completed (str, optional): JavaScript code to be executed after AJAX request completes.
             on_error (str, optional): JavaScript code to be executed on AJAX error response.
         """
-        super().__init__(None)
-        self.source = source
-        self.alt = alt
+        super().__init__(children)
+        self.direction = direction
+        self.horizontal = horizontal
+        self.vertical = vertical
         self.style = style or {}
         self.default = default
         self.id = id
@@ -105,10 +112,10 @@ class Image(Widget):
 
     def render(self) -> str:
         """
-        Renders the image as HTML.
+        Renders the row as HTML.
 
         Returns:
-            str: The HTML representation of the image.
+            str: The HTML representation of the row.
         """
         onclick = f"event.preventDefault(); {self.on_click}" if self.on_click else ""
         if self.js and self.route:
@@ -127,17 +134,18 @@ class Image(Widget):
             self.js.append(js_code)
         style_attr = format_style(self.style)
         class_attr = format_class_attr(self.classes)
-        return f'<img id="{self.id}" src="{self.source}" alt="{self.alt}" style="{style_attr}" class="{class_attr}" onclick="{onclick}">'
+        rendered_children = ''.join(child.render() for child in self.children)
+        return f'<div id="{self.id}" class="{class_attr}" style="{style_attr}" onclick="{onclick}">{rendered_children}</div>'
 
     def _apply_default_style(self):
         """
-        Applies default CSS styles to the image.
+        Applies default CSS styles to the row.
         """
         default_style = {
-            'max-width': '100%',
-            'height': 'auto',
-            'background-size': 'cover',
-            'background-position': 'center',
-            'border-radius': '7px'
+            'display': 'flex',
+            'flex-direction': self.direction,
+            'justify-content': self.horizontal,
+            'align-items': self.vertical,
+            'flex-wrap': 'wrap'
         }
         self.style = {**default_style, **self.style}
