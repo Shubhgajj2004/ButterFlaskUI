@@ -42,7 +42,7 @@ class Column(Widget):
         self,
         direction: str = 'column',
         vertical: str = 'flex-start',
-        horizontal: str ='center',
+        horizontal: str ='flex-start',
         children: List[Widget] = None,
         style: Optional[Dict[str, str]] = None,
         default: bool = True,
@@ -144,8 +144,8 @@ class Column(Widget):
         default_style = {
             'display': 'inline-flex',
             'flex-direction': self.direction,
-            'justify-content': self.horizontal,
-            'align-items': self.vertical,
-            'flex-wrap': 'wrap'
+            'justify-content': self.vertical,
+            'align-items': self.horizontal,
+            'flex-wrap': 'wrap',
         }
         self.style = {**default_style, **self.style}
