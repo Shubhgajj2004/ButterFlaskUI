@@ -80,6 +80,7 @@ class Button(Widget):
         """
         super().__init__(None)
         self.text = text
+        self.alignment = alignment
         self.id = id
         self.classes = classes or []  # Initialize as empty list if None is provided
         self.func_name = func_name
@@ -129,24 +130,28 @@ class Button(Widget):
         """
         Applies default CSS styles to the button.
         """
-        if(self.alignement == 'top'):
-            default_style = {
-                'position':'absolute',
-                'top':'0px'
-            }
-        elif(self.alignment == 'bottom'):
-            default_style = {
-                'position':'absolute',
-                'bottom':'0px'
-            }
-        elif(self.alignment == 'left'):
-            default_style = {
-                'position':'absolute',
-                'left':'0px'
-            }
-        elif(self.alignment == 'bottom'):
-            default_style = {
-                'position':'right',
-                'right':'0px'
-            }
+        # if(self.alignement == 'top'):
+        #     default_style = {
+        #         'position':'absolute',
+        #         'top':'0px'
+        #     }
+        # elif(self.alignment == 'bottom'):
+        #     default_style = {
+        #         'position':'absolute',
+        #         'bottom':'0px'
+        #     }
+        # elif(self.alignment == 'left'):
+        #     default_style = {
+        #         'position':'absolute',
+        #         'left':'0px'
+        #     }
+        # elif(self.alignment == 'bottom'):
+        #     default_style = {
+        #         'position':'right',
+        #         'right':'0px'
+        #     }
+        default_style = {
+            'position':'absolute',
+            self.alignment : '0px'
+        }
         self.style = {**default_style, **self.style}
