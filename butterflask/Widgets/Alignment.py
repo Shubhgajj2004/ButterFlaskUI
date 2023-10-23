@@ -134,4 +134,19 @@ class Button(Widget):
                 'position':'absolute',
                 'top':'0px'
             }
+        elif(self.alignment == 'bottom'):
+            default_style = {
+                'position':'absolute',
+                'bottom':'0px'
+            }
+        elif(self.alignment == 'left'):
+            default_style = {
+                'position':'absolute',
+                'left':'0px'
+            }
+        elif(self.alignment == 'bottom'):
+            default_style = {
+                'position':'right',
+                'right':'0px'
+            }
         self.style = {**default_style, **self.style}
