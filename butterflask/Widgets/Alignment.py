@@ -36,7 +36,8 @@ class Button(Widget):
     """
 
     def __init__(
-        alignment,
+        ver_alignment,
+        hor_alignment,
         self,
         text: str,
         default: bool = True,
@@ -79,8 +80,9 @@ class Button(Widget):
             on_error (str, optional): JavaScript code to be executed on AJAX error response.
         """
         super().__init__(None)
+        self.ver_alignment = ver_alignment,
+        self.hor_alignment = hor_alignment,
         self.text = text
-        self.alignment = alignment
         self.id = id
         self.classes = classes or []  # Initialize as empty list if None is provided
         self.func_name = func_name
@@ -152,6 +154,7 @@ class Button(Widget):
         #     }
         default_style = {
             'position':'absolute',
-            self.alignment : '0px'
+            self.ver_alignment : '0px',
+            self.hor_alignment : '0px'
         }
         self.style = {**default_style, **self.style}
